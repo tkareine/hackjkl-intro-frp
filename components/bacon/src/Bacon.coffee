@@ -7,21 +7,15 @@ else
 # eventTransformer - should return one value or one or many events
 Bacon.fromBinder = (binder, eventTransformer = _.id) ->
   new EventStream (sink) ->
-    unbind = ->
-      # defer if binder calls handler in sync before returning unbinder
-      if unbinder? then unbinder() else setTimeout (-> unbinder()), 0
     unbinder = binder (args...) ->
       value = eventTransformer(args...)
       unless value instanceof Array and _.last(value) instanceof Event
         value = [value]
-      try
-        for event in value 
-          reply = sink(event = toEvent(event))
-          unbind() if reply == Bacon.noMore or event.isEnd()
-      catch e
-        # make sure the stream ends even if an exception is thrown
-        unbind() if _.last(value).isEnd?()
-        throw e
+      for event in value 
+        reply = sink(event = toEvent(event))
+        if reply == Bacon.noMore or event.isEnd()
+          # defer if binder calls handler in sync before returning unbinder
+          if unbinder? then unbinder() else setTimeout (-> unbinder()), 0
 
 # eventTransformer - defaults to returning the first argument to handler
 Bacon.$ = asEventStream: (eventName, selector, eventTransformer) ->
@@ -132,6 +126,40 @@ Bacon.combineAll = (streams, f) ->
 
 Bacon.mergeAll = (streams) ->
   Bacon.combineAll(streams, (s1, s2) -> s1.merge(s2))
+
+Bacon.zipAsArray = (streams, more...) ->
+  if not (streams instanceof Array)
+    streams = [streams].concat(more)
+  Bacon.zipWith(streams, Array)
+
+Bacon.zipWith = (streams, f) ->
+    new EventStream (sink) ->
+      bufs = ([] for s in streams)
+      unsubscribed = false
+      unsubs = (nop for s in streams)
+      unsubAll = (-> f() for f in unsubs ; unsubscribed = true)
+      zipSink = (e) ->
+        reply = sink e
+        if reply == Bacon.noMore or e.isEnd()
+          unsubAll()
+        reply
+      handle = (i) -> (e) ->
+       if e.isError()
+         zipSink e
+       else if e.isInitial()
+         Bacon.more
+       else
+         bufs[i].push(e)
+         if not e.isEnd() and _.all(b.length for b in bufs)
+           vs = (b.shift().value() for b in bufs)
+           reply = zipSink e.apply _.always f(vs ...)
+         if _.any(b.length and b[0].isEnd() for b in bufs)
+           reply = zipSink end()
+         reply or Bacon.more
+      for s,j in streams
+        unsubs[j] = do (i=j) ->
+          s.subscribe (handle i) unless unsubscribed
+      unsubAll
 
 Bacon.combineAsArray = (streams, more...) ->
   if not (streams instanceof Array)
@@ -434,6 +462,9 @@ class Observable
             unsub = nop
       unsub
     new Property(new PropertyDispatcher(subscribe).subscribe)  
+
+  zip: (other, f = Array) ->
+    Bacon.zipWith([this,other], f)
 
   diff: (start, f) -> 
     f = toCombinator(f)
@@ -987,6 +1018,10 @@ _ = {
     for x in xs
       return false if not x
     return true
+  any: (xs) ->
+    for x in xs
+      return true if x
+    return false
   without: (x, xs) ->
     _.filter(((y) -> y != x), xs)
 }

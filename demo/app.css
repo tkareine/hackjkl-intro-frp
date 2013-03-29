@@ -1,0 +1,6 @@
+.search .controls {
+  padding-right: 20px;
+}
+.search .controls.loading {
+  background: url('loading.gif') no-repeat right;
+}

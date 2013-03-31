@@ -19,7 +19,8 @@
 
   var isSearching = searchTerm.awaiting(searchResult).mapError(false)
 
-  searchResult.assign($('.search .result'), 'text')
+  searchResult.onValue(_.bind(showSearchSuccess, null, $('.search .results')))
+  searchResult.onError(_.bind(showSearchFailure, null, $('.search .results')))
 
   isSearching.assign($('.search .controls'), 'toggleClass', 'loading')
   isSearching.assign($('.search .controls button'), 'prop', 'disabled')
@@ -38,11 +39,11 @@
 
     _.delay(function() {
       if (randomSuccess()) {
-        console.log("resolving search: " + query)
-        deferred.resolve("result for " + query)
+        console.log("resolving search for " + query)
+        deferred.resolve(['size: ' + query.length, 'original: ' + query, 'reverted: ' + query.split('').reverse().join('')])
       } else {
-        console.log("rejecting search: " + query)
-        deferred.reject("failed for " + query)
+        console.log("rejecting search for " + query)
+        deferred.reject('backend unavailable')
       }
     }, randomTimeout())
 
@@ -51,5 +52,23 @@
     function randomTimeout() { return 500 + Math.floor(Math.random() * 1500) }
 
     function randomSuccess() { return Math.random() > 0.2 }
+  }
+
+  function showSearchSuccess($destination, results) {
+    $destination
+      .removeClass('failure')
+      .addClass('success')
+      .html(resultsToMarkup(results))
+
+    function resultsToMarkup(results) { return '<ul>' + _.map(results, resultToListItem).join('') + '</li>' }
+
+    function resultToListItem(res) { return '<li>' + res + '</li>' }
+  }
+
+  function showSearchFailure($destination, message) {
+    $destination
+      .removeClass('success')
+      .addClass('failure')
+      .text(message)
   }
 })(window.$, window._, window.Bacon)

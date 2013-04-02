@@ -1,12 +1,10 @@
 (function($, _, App) {
-  var lastInput
+  var isUnique = IsUnique()
+  var switchLatest = SwitchLatest()
 
   $('.search input').on('keydown', _.debounce(function(e) {
     var input = $.trim(e.currentTarget.value)
-    if (!_.isEmpty(input) && input !== lastInput) {
-      onSearchTerm(input)
-      lastInput = input
-    }
+    if (!_.isEmpty(input) && isUnique(input)) onSearchTerm(input)
   }, 500))
     
   $('.search button').on('click', function() {
@@ -14,12 +12,10 @@
     if (!_.isEmpty(input)) onSearchTerm(input)
   })
 
-  var switcher = switchLatest()
-
   function onSearchTerm(term) {
     toggleLoadingIndicator(true)
     toggleButtonEnabled(false)
-    switcher(App.searchService(term))
+    switchLatest(App.searchService(term))
       .done(onSearchSuccess)
       .fail(onSearchFailure)
   }
@@ -44,7 +40,16 @@
     $('.search .controls button').prop('disabled', !enable)
   }
 
-  function switchLatest() {
+  function IsUnique() {
+    var last
+    return function(current) {
+      var isUnique = current !== last
+      if (isUnique) last = current
+      return isUnique
+    }
+  }
+
+  function SwitchLatest() {
     var last
     return function(promise) {
       last = promise

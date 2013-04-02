@@ -10,6 +10,8 @@
   var searchButton = $('.search button')
     .asEventStream('click')
     .map(function() { return $('.search input').val() })
+    .map($.trim)
+    .filter(_.not(_.isEmpty))
 
   var searchTerm = searchKeypress.merge(searchButton)
 

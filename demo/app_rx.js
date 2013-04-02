@@ -10,6 +10,8 @@
   var searchButton = $('.search button')
     .onAsObservable('click')
     .select(function() { return $('.search input').val() })
+    .select($.trim)
+    .where(_.not(_.isEmpty))
 
   var searchTerm = searchKeypress.merge(searchButton)
 

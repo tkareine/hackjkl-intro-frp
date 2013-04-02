@@ -1,20 +1,20 @@
 (function($, _) {
   window.App = {
     searchService: function(query) {
-      console.log("searching service: " + query)
+      console.log('searching service: ' + query)
 
       var deferred = $.Deferred()
 
       _.delay(function() {
         if (randomSuccess()) {
-          console.log("resolving search for " + query)
+          console.log('resolving search: ' + query)
           deferred.resolve([
             'size: ' + query.length,
             'original: ' + query,
             'reverted: ' + query.split('').reverse().join('')
           ])
         } else {
-          console.log("rejecting search for " + query)
+          console.log('rejecting search: ' + query)
           deferred.reject('backend unavailable')
         }
       }, randomTimeout())

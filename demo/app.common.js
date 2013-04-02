@@ -1,4 +1,6 @@
 (function($, _) {
+  var isMinTimeoutFlipped = false
+
   window.App = {
     searchService: function(query) {
       console.log('> querying service: ' + query)
@@ -21,9 +23,18 @@
 
       return deferred.promise()
 
-      function randomTimeout() { return 500 + Math.floor(Math.random() * 2500) }
+      function randomTimeout() {
+        var min = flipMinTimeout() ? 500 : 2500
+        return min + Math.floor(Math.random() * 1500)
+      }
 
       function randomSuccess() { return Math.random() > 0.2 }
+
+      function flipMinTimeout() {
+        var last = isMinTimeoutFlipped
+        isMinTimeoutFlipped = !isMinTimeoutFlipped
+        return last
+      }
     },
 
     showSearchSuccess: function($destination, results) {

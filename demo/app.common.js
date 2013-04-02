@@ -21,7 +21,7 @@
 
       return deferred.promise()
 
-      function randomTimeout() { return 500 + Math.floor(Math.random() * 1500) }
+      function randomTimeout() { return 500 + Math.floor(Math.random() * 2500) }
 
       function randomSuccess() { return Math.random() > 0.2 }
     },

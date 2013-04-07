@@ -1,10 +1,10 @@
 (function($, _, App) {
-  var isUnique = IsUnique()
+  var isEqualToLast = IsEqualToLast()
   var switchLatest = SwitchLatest()
 
   $('.search input').on('keydown', _.debounce(function(e) {
     var input = $.trim(e.currentTarget.value)
-    if (!_.isEmpty(input) && isUnique(input)) onSearchTerm(input)
+    if (!_.isEmpty(input) && !isEqualToLast(input)) onSearchTerm(input)
   }, 500))
     
   $('.search button').on('click', function() {
@@ -40,12 +40,12 @@
     $('.search .controls button').prop('disabled', !enable)
   }
 
-  function IsUnique() {
-    var last
+  function IsEqualToLast() {
+    var lastNonEqual
     return function(current) {
-      var isUnique = current !== last
-      if (isUnique) last = current
-      return isUnique
+      var isEqual = current === lastNonEqual
+      if (!isEqual) lastNonEqual = current
+      return isEqual
     }
   }
 

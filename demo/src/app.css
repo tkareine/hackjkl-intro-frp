@@ -3,23 +3,23 @@ body {
   margin: 0;
   padding: 0;
 }
-.search {
+#search {
   background-color: #dddddd;
   padding: 10px;
 }
-.search .controls {
+#search .controls {
   padding-right: 20px;
 }
-.search .controls.loading {
+#search .controls.loading {
   background: url('loading.gif') no-repeat right;
 }
-.search .results {
+#search .results {
   margin-top: 10px;
   padding: 10px 5px;
 }
-.search .results.success {
+#search .results.success {
   background-color: rgb(122, 224, 122);
 }
-.search .results.failure {
+#search .results.failure {
   background-color: rgb(255, 152, 152);
 }

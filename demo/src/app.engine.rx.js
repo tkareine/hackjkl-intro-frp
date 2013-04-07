@@ -1,15 +1,15 @@
 (function($, _, Rx, App) {
-  var searchKeypress = $('.search input')
-    .onAsObservable('keydown')
+  var searchKeypress = $('#search input')
+    .onAsObservable('keyup')
     .throttle(500)
     .select(currentTargetValueOf)
     .select($.trim)
     .where(_.not(_.isEmpty))
     .distinctUntilChanged()
 
-  var searchButton = $('.search button')
+  var searchButton = $('#search button')
     .onAsObservable('click')
-    .select(function() { return $('.search input').val() })
+    .select(function() { return $('#search input').val() })
     .select($.trim)
     .where(_.not(_.isEmpty))
 
@@ -30,16 +30,16 @@
     .where(isSuccessMaterial)
     .selectProperty('value')
     .selectProperty('0')
-    .subscribe(_.bind(App.showSearchSuccess, null, $('.search .results')))
+    .subscribe(_.bind(App.showSearchSuccess, null, $('#search .results')))
 
   searchResult
     .where(isFailureMaterial)
     .selectProperty('exception')
     .selectProperty('0')
-    .subscribe(_.bind(App.showSearchFailure, null, $('.search .results')))
+    .subscribe(_.bind(App.showSearchFailure, null, $('#search .results')))
 
-  isSearching.subscribe(_.bind($.fn.toggleClass, $('.search .controls'), 'loading'))
-  isSearching.subscribe(_.bind($.fn.prop, $('.search .controls button'), 'disabled'))
+  isSearching.subscribe(_.bind($.fn.toggleClass, $('#search .controls'), 'loading'))
+  isSearching.subscribe(_.bind($.fn.prop, $('#search .controls button'), 'disabled'))
 
   function currentTargetValueOf(event) { return event.currentTarget.value }
 
@@ -50,4 +50,6 @@
   function searchServiceAsObservable(query) {
     return $.Deferred.prototype.toObservable.apply(App.searchService(query)).materialize()
   }
+
+  console.log('Loaded RxJS engine')
 })(window.jQuery, window._, window.Rx, window.App)

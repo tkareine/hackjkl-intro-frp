@@ -2,13 +2,13 @@
   var isEqualToLast = IsEqualToLast()
   var switchLatest = SwitchLatest()
 
-  $('.search input').on('keydown', _.debounce(function(e) {
+  $('#search input').on('keyup', _.debounce(function(e) {
     var input = $.trim(e.currentTarget.value)
     if (!_.isEmpty(input) && !isEqualToLast(input)) onSearchTerm(input)
   }, 500))
-    
-  $('.search button').on('click', function() {
-    var input = $.trim($('.search input').val())
+  
+  $('#search button').on('click', function() {
+    var input = $.trim($('#search input').val())
     if (!_.isEmpty(input)) onSearchTerm(input)
   })
 
@@ -23,21 +23,21 @@
   function onSearchSuccess(results) {
     toggleLoadingIndicator(false)
     toggleButtonEnabled(true)
-    App.showSearchSuccess($('.search .results'), results)
+    App.showSearchSuccess($('#search .results'), results)
   }
 
   function onSearchFailure(message) {
     toggleLoadingIndicator(false)
     toggleButtonEnabled(true)
-    App.showSearchFailure($('.search .results'), message)
+    App.showSearchFailure($('#search .results'), message)
   }
 
   function toggleLoadingIndicator(enable) {
-    $('.search .controls').toggleClass('loading', enable)
+    $('#search .controls').toggleClass('loading', enable)
   }
 
   function toggleButtonEnabled(enable) {
-    $('.search .controls button').prop('disabled', !enable)
+    $('#search .controls button').prop('disabled', !enable)
   }
 
   function IsEqualToLast() {
@@ -59,4 +59,6 @@
       return deferred.promise()
     }
   }
+
+  console.log('Loaded traditional engine')
 })(window.jQuery, window._, window.App)

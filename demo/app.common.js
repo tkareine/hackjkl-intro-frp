@@ -2,57 +2,66 @@
   var isMinTimeoutFlipped = false
 
   window.App = {
-    searchService: function(query) {
-      console.log('> querying service: ' + query)
+    searchService:     searchService,
+    queryToResult:     queryToResult,
+    showSearchSuccess: showSearchSuccess,
+    showSearchFailure: showSearchFailure
+  }
 
-      var deferred = $.Deferred()
+  function searchService(query) {
+    console.log('> querying service: ' + query)
 
-      _.delay(function() {
-        if (randomSuccess()) {
-          console.log('  resolving search: ' + query)
-          deferred.resolve([
-            'size: ' + query.length,
-            'original: ' + query,
-            'reverted: ' + query.split('').reverse().join('')
-          ])
-        } else {
-          console.log('  rejecting search: ' + query)
-          deferred.reject('backend unavailable')
-        }
-      }, randomTimeout())
+    var deferred = $.Deferred()
 
-      return deferred.promise()
-
-      function randomTimeout() {
-        var min = flipMinTimeout() ? 500 : 2500
-        return min + Math.floor(Math.random() * 1500)
+    _.delay(function() {
+      if (randomSuccess()) {
+        console.log('  resolving search: ' + query)
+        deferred.resolve(queryToResult(query))
+      } else {
+        console.log('  rejecting search: ' + query)
+        deferred.reject('backend unavailable')
       }
+    }, randomTimeout())
 
-      function randomSuccess() { return Math.random() > 0.2 }
+    return deferred.promise()
 
-      function flipMinTimeout() {
-        var last = isMinTimeoutFlipped
-        isMinTimeoutFlipped = !isMinTimeoutFlipped
-        return last
-      }
-    },
-
-    showSearchSuccess: function($destination, results) {
-      $destination
-        .removeClass('failure')
-        .addClass('success')
-        .html(resultsToMarkup(results))
-
-      function resultsToMarkup(results) { return '<ul>' + _.map(results, resultToListItem).join('') + '</li>' }
-
-      function resultToListItem(res) { return '<li>' + res + '</li>' }
-    },
-
-    showSearchFailure: function($destination, message) {
-      $destination
-        .removeClass('success')
-        .addClass('failure')
-        .text(message)
+    function randomTimeout() {
+      var min = flipMinTimeout() ? 500 : 2500
+      return min + Math.floor(Math.random() * 1500)
     }
+
+    function randomSuccess() { return Math.random() > 0.2 }
+
+    function flipMinTimeout() {
+      var last = isMinTimeoutFlipped
+      isMinTimeoutFlipped = !isMinTimeoutFlipped
+      return last
+    }
+  }
+
+  function queryToResult(query) {
+    return [
+      'size: ' + query.length,
+      'original: ' + query,
+      'reverted: ' + query.split('').reverse().join('')
+    ]
+  }
+
+  function showSearchSuccess($destination, results) {
+    $destination
+      .removeClass('failure')
+      .addClass('success')
+      .html(resultsToMarkup(results))
+
+    function resultsToMarkup(results) { return '<ul>' + _.map(results, resultToListItem).join('') + '</li>' }
+
+    function resultToListItem(res) { return '<li>' + res + '</li>' }
+  }
+
+  function showSearchFailure($destination, message) {
+    $destination
+      .removeClass('success')
+      .addClass('failure')
+      .text(message)
   }
 })(window.jQuery, window._)

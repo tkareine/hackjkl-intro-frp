@@ -13,8 +13,9 @@
       captureRequestTo: captureRequestTo,
       checkCalls:       getAndResetNumberOfCalls,
       reset:            reset,
-      respondDefault:   respondDefault,
+      respondFailure:   respondFailure,
       respondFailureTo: respondFailureTo,
+      respondSuccess:   respondSuccess,
       respondSuccessTo: respondSuccessTo,
       search:           search
     }
@@ -27,17 +28,22 @@
       return num
     }
 
-    function reset() { stubResponse(respondSuccess) }
+    function reset() {
+      countCalls = 0
+      stubResponse(succeed)
+    }
 
-    function respondDefault(callback) { stubResponse(respondSuccess, callback) }
+    function respondFailure(callback) { stubResponse(fail, callback) }
 
-    function respondFailure(deferred) { deferred.reject('backend error') }
+    function respondFailureTo(request) { fail(null, request.deferred) }
 
-    function respondFailureTo(request) { respondFailure(request.deferred) }
+    function respondSuccess(callback) { stubResponse(succeed, callback) }
 
-    function respondSuccess(query, deferred) { deferred.resolve(queryToResult(query)) }
+    function respondSuccessTo(request) { succeed(request.query, request.deferred) }
 
-    function respondSuccessTo(request) { respondSuccess(request.query, request.deferred) }
+    function fail(_, deferred) { deferred.reject('backend error') }
+
+    function succeed(query, deferred) { deferred.resolve(queryToResult(query)) }
 
     function search(query) {
       countCalls += 1

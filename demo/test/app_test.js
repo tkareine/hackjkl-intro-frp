@@ -26,6 +26,8 @@
 
       it('performs search', expectNumCalls(1))
 
+      it('trims query input', expectQueryInRequestIs('term', request))
+
       it('disables search button', expectSearchButtonIs(':disabled'))
 
       it('shows loader', expectLoaderIsShown(true))
@@ -38,7 +40,20 @@
         it('enables search button', expectSearchButtonIs(':enabled'))
 
         it('hides loader', expectLoaderIsShown(false))
+
+        it('shows successful results', expectResultsIs('success'))
       })
+    })
+
+    describe('when query results to backend response failure', function() {
+      before(function(done) {
+        backend.respondFailure(done)
+        TS.query('another term')
+      })
+
+      after(backend.reset)
+
+      it('shows failure results', expectResultsIs('failure'))
     })
 
     describe('when entering input and changing it back to empty within throttling period (after page load)', function() {
@@ -60,7 +75,7 @@
 
       describe('and then entering new input and waiting for the throttling period', function() {
         before(function(done) {
-          backend.respondDefault(done)
+          backend.respondSuccess(done)
           TS.query('input')
           throttler.resumeLast()
         })
@@ -86,12 +101,20 @@
       return function() { backend.checkCalls().should.equal(num) }
     }
 
+    function expectQueryInRequestIs(expected, request) {
+      return function() { request.query.should.equal(expected) }
+    }
+
     function expectSearchButtonIs(status) {
       return function() { $('#search .controls button').is(status).should.be.ok }
     }
 
     function expectLoaderIsShown(isShown) {
       return function() { $('#search .controls').hasClass('loading').should.equal(isShown) }
+    }
+
+    function expectResultsIs(klass) {
+      return function() { $('#search .results').should.have.class(klass) }
     }
   })
 })(window.jQuery, window.Test.Support, window.Test.fakeBackend)

@@ -1,46 +1,56 @@
 (function($, _, App, Test, Bacon, Rx) {
   Test.Support = {
-    pauseThrottleImpls: pauseThrottleImpls,
-    query:              query,
-    resetApp:           resetApp,
-    storeResponderTo:   storeResponderTo,
-    swapValue:          swapValue
+    pauseThrottling: pauseThrottling,
+    query:           query,
+    resetApp:        resetApp,
+    swapValue:       swapValue
   }
 
-  function pauseThrottleImpls() {
+  function pauseThrottling() {
     var engineArgs = ({
         bacon:       [BaconPauseStream, Bacon.EventStream.prototype, 'debounce'],
-        rx:          [Rx.Observable.prototype, 'throttle', Rx.Observable.prototype.__org__throttle],
+        rx:          [RxPauseStream,    Rx.Observable.prototype,     'throttle'],
         traditional: [_, 'debounce', _.__org__debounce]
       })[App.Env.engine]
 
-    var pauser = engineArgs[2]()
-    var swapped = swapValue.call(null, engineArgs.slice(1).concat(pauser.combinator))
+    var pauser = engineArgs[0]()
+    var swapped = swapValue.apply(null, engineArgs.slice(1).concat(pauser.combinator))
 
-    return {
-      resumeLast: pauser.resumeLast,
-      restore:    swapped.restore
-    }
+    return { resumeLast: pauser.resumeLast, restore: swapped.restore }
   }
 
   function BaconPauseStream() {
-    var onValueEvents = []
+    var lastEvent
 
-    var collectorCombinator = function() {
+    return { combinator: combinator, resumeLast: resumeLast }
+
+    function combinator() {
       var upstream = this
       return new Bacon.EventStream(function(subscriber) {
         return upstream.onValue(function(val) {
-          onValueEvents.push(function() { subscriber(new Bacon.Next(val)) })
+          lastEvent = function() { subscriber(new Bacon.Next(val)) }
         })
       })
     }
 
-    var resumeLastEvent = function() {
-      if (!_.isEmpty(onValueEvents)) _.last(onValueEvents)()
-      onValueEvents.length = 0
+    function resumeLast() { if (lastEvent) lastEvent() }
+  }
+
+  function RxPauseStream() {
+    var lastEvent
+
+    return { combinator: combinator, resumeLast: resumeLast }
+
+    function combinator() {
+      var upstream = this
+      return Rx.Observable.createWithDisposable(function(observer) {
+        return upstream.subscribe(function(val) {
+          lastEvent = function() { observer.onNext(val) }
+        })
+      })
     }
 
-    return { combinator: collectorCombinator, resumeLast: resumeLastEvent }
+    function resumeLast() { if (lastEvent) lastEvent() }
   }
 
   function query(input) { $('#search input').val(input).keyup() }
@@ -48,13 +58,6 @@
   function resetApp(callback) {
     $('#search').remove()
     App.load().then(function() { callback() })
-  }
-
-  function storeResponderTo(obj) {
-    return function(query, deferred) {
-      obj.query = query
-      obj.deferred = deferred
-    }
   }
 
   function swapValue(obj, name, newValue) {

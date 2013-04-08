@@ -15,10 +15,10 @@
     })
 
     describe('when entering space, term, and space for search, and response has not arrived', function() {
-      var backendResponder = {}
+      var request = {}
 
-      before(function() {
-        backend.respondWith(TS.storeResponderTo(backendResponder))
+      before(function(done) {
+        backend.captureRequestTo(request, done)
         TS.query(' term ')
       })
 
@@ -32,7 +32,7 @@
 
       describe('and when successful response arrives', function() {
         before(function() {
-          backendResponder.deferred.resolve(backend.queryToResult(backendResponder.query))
+          backend.respondSuccessTo(request)
         })
 
         it('enables search button', expectSearchButtonIs(':enabled'))
@@ -41,32 +41,47 @@
       })
     })
 
-/*
     describe('when entering input and changing it back to empty within throttling period (after page load)', function() {
-      var throttlers
+      var throttler
 
       before(function(done) {
-        throttlers = TS.pauseThrottleImpls()
+        throttler = TS.pauseThrottling()
         TS.resetApp(function() {
           TS.query('input')
           TS.query('')
-          throttlers.resumeLast()
+          throttler.resumeLast()
           done()
         })
       })
 
-      after(function() { throttlers.restore() })
+      after(function() { throttler.restore() })
 
       it('does not perform search', expectNumCalls(0))
 
-      describe('and when entering input', function() {
-        before(function() {
+      describe('and then entering new input and waiting for the throttling period', function() {
+        before(function(done) {
+          backend.respondDefault(done)
           TS.query('input')
-          throttlers.resumeLast()
+          throttler.resumeLast()
+        })
+
+        after(backend.reset)
+
+        it('performs search', expectNumCalls(1))
+
+        describe('and then changing the input and changing it back within throttling period', function() {
+          before(function() {
+            backend.reset()
+            TS.query('inp')
+            TS.query('input')
+            throttler.resumeLast()
+          })
+
+          it('does not perform search', expectNumCalls(0))
         })
       })
     })
-*/
+
     function expectNumCalls(num) {
       return function() { backend.checkCalls().should.equal(num) }
     }

@@ -6,6 +6,8 @@
     .select($.trim)
     .where(_.not(_.isEmpty))
     .distinctUntilChanged()
+    .publish()
+    .refCount()
 
   var searchButton = $('#search button')
     .onAsObservable('click')

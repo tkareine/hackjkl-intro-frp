@@ -1,4 +1,4 @@
-(function($, _, Bacon, App) {
+(function($, _, Bacon, Common) {
   var searchKeypress = $('#search input')
     .asEventStream('keyup')
     .debounce(500)
@@ -16,16 +16,16 @@
   var searchTerm = searchKeypress.merge(searchButton)
 
   var searchResult = searchTerm
-    .map(App.searchService)
+    .map(Common.searchService)
     .flatMapLatest(Bacon.fromPromise)
 
   var isSearching = searchTerm.awaiting(searchResult).mapError(false)
 
-  searchResult.onValue(_.bind(App.showSearchSuccess, null, $('#search .results')))
-  searchResult.onError(_.bind(App.showSearchFailure, null, $('#search .results')))
+  searchResult.onValue(_.bind(Common.showSearchSuccess, null, $('#search .results')))
+  searchResult.onError(_.bind(Common.showSearchFailure, null, $('#search .results')))
 
   isSearching.assign($('#search .controls'), 'toggleClass', 'loading')
   isSearching.assign($('#search .controls button'), 'prop', 'disabled')
 
   console.log('Loaded Bacon engine')
-})(window.jQuery, window._, window.Bacon, window.App)
+})(window.jQuery, window._, window.Bacon, window.App.Common)

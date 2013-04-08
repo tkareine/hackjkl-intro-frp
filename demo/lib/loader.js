@@ -2,9 +2,8 @@
   var cacheBuster = (new Date()).getTime()
 
   window.Loader = {
-    loadCSS:         loadCSS,
-    loadJS:          loadJS,
-    queryParameters: queryParameters
+    loadCSS: loadCSS,
+    loadJS:  loadJS
   }
 
   function loadCSS(source) {
@@ -44,10 +43,4 @@
   function getCacheBuster() { return 'bust=' + cacheBuster }
 
   function getFirstNodeByTag(name) { return document.getElementsByTagName(name)[0] }
-
-  function queryParameters() {
-    return _.object(_.map(queryString(), function(pair) { return pair.split('=', 2) }))
-  }
-
-  function queryString() { return document.location.search.substr(1).split('&') }
 })(window.jQuery, window._)

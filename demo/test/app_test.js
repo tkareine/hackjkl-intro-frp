@@ -1,11 +1,6 @@
-(function($, App, TS) {
+(function($, TS, backend) {
   describe('After loading application', function() {
-    var Backend = TS.FakeBackend()
-
-    before(function(done) {
-      App.searchService = Backend.search
-      TS.resetApp(done)
-    })
+    before(TS.resetApp)
 
     describe('when entering space for search', function() {
       before(function() {
@@ -23,11 +18,11 @@
       var backendResponder = {}
 
       before(function() {
-        Backend.respondWith(TS.storeResponderTo(backendResponder))
+        backend.respondWith(TS.storeResponderTo(backendResponder))
         TS.query(' term ')
       })
 
-      after(Backend.reset)
+      after(backend.reset)
 
       it('performs search', expectNumCalls(1))
 
@@ -37,7 +32,7 @@
 
       describe('and when successful response arrives', function() {
         before(function() {
-          backendResponder.deferred.resolve(App.queryToResult(backendResponder.query))
+          backendResponder.deferred.resolve(backend.queryToResult(backendResponder.query))
         })
 
         it('enables search button', expectSearchButtonIs(':enabled'))
@@ -46,25 +41,34 @@
       })
     })
 
-    describe('when entering input and changing it back to the original within throttling period', function() {
+/*
+    describe('when entering input and changing it back to empty within throttling period (after page load)', function() {
       var throttlers
 
       before(function(done) {
-        throttlers = TS.swapThrottleImpls()
+        throttlers = TS.pauseThrottleImpls()
         TS.resetApp(function() {
-          TS.query('key')
+          TS.query('input')
           TS.query('')
-          setTimeout(done, 700)
+          throttlers.resumeLast()
+          done()
         })
       })
 
       after(function() { throttlers.restore() })
 
       it('does not perform search', expectNumCalls(0))
-    })
 
+      describe('and when entering input', function() {
+        before(function() {
+          TS.query('input')
+          throttlers.resumeLast()
+        })
+      })
+    })
+*/
     function expectNumCalls(num) {
-      return function() { Backend.checkCalls().should.equal(num) }
+      return function() { backend.checkCalls().should.equal(num) }
     }
 
     function expectSearchButtonIs(status) {
@@ -75,4 +79,4 @@
       return function() { $('#search .controls').hasClass('loading').should.equal(isShown) }
     }
   })
-})(window.jQuery, window.App, window.Test.Support)
+})(window.jQuery, window.Test.Support, window.Test.fakeBackend)

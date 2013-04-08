@@ -1,13 +1,5 @@
-(function($, _, Loader, Bacon, Rx) {
-  window.Test = {
-    loadAndRun: loadAndRunTests,
-    shouldRun:  shouldRunTests
-  }
-
-  function shouldRunTests() {
-    var queryParams = Loader.queryParameters()
-    return _.has(queryParams, 'test') || _.has(queryParams, 'grep')
-  }
+(function($, _, Loader, App, Bacon, Rx) {
+  var Test = window.Test = { loadAndRun: loadAndRunTests }
 
   function loadAndRunTests() {
     var mocha, chai
@@ -19,9 +11,8 @@
       .then(setupMocha)
       .then(setupChai)
       .then(setupJQuery)
-      .then(setupUnderscore)
-      .then(setupBacon)
-      .then(setupRxJS)
+      .then(setupEngine)
+      .then(setupApp)
       .then(loadTests)
       .then(runMocha)
 
@@ -43,29 +34,38 @@
 
     function setupJQuery() { $.fx.off = true }
 
-    function setupUnderscore() {
-      _.__org__debounce = _.debounce
-      _.debounce = function(func) { return function() { return func.apply(this, _.toArray(arguments)) } }
+    function setupEngine() {
+      ({
+        bacon:       setupBacon,
+        rx:          setupRxJS,
+        traditional: setupUnderscore
+      })[App.Env.engine]()
+
+      function setupUnderscore() {
+        _.__org__debounce = _.debounce
+        _.debounce = function(func) { return function() { return func.apply(this, _.toArray(arguments)) } }
+      }
+
+      function setupBacon() {
+        Bacon.EventStream.prototype.__org__debounce = Bacon.EventStream.prototype.debounce
+        Bacon.EventStream.prototype.debounce = function() { return this }
+      }
+
+      function setupRxJS() {
+        Rx.Observable.prototype.__org__throttle = Rx.Observable.prototype.throttle
+        Rx.Observable.prototype.throttle = function() { return this }
+      }
     }
 
-    function setupBacon() {
-      Bacon.EventStream.prototype.__org__debounce = Bacon.EventStream.prototype.debounce
-      Bacon.EventStream.prototype.debounce = function() { return this }
-    }
-
-    function setupRxJS() {
-      Rx.Observable.prototype.__org__throttle = Rx.Observable.prototype.throttle
-      Rx.Observable.prototype.throttle = function() { return this }
+    function setupApp() {
+      return Loader.loadJS('test/FakeBackend.js').then(function() {
+        Test.fakeBackend = Test.FakeBackend()
+        App.Common.searchService = Test.fakeBackend.search
+      })
     }
 
     function loadTests() { return Loader.loadJS('test/app_test.js') }
 
-    function runMocha() {
-      mocha
-        .checkLeaks()
-        .globals(['jQuery', '_'])
-        .run()
-    }
+    function runMocha() { mocha.checkLeaks().run() }
   }
-
-})(window.jQuery, window._, window.Loader, window.Bacon, window.Rx)
+})(window.jQuery, window._, window.Loader, window.App, window.Bacon, window.Rx)

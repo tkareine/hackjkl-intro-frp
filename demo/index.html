@@ -17,6 +17,7 @@
     <script src="lib/underscore.mixins.js"></script>
     <script src="lib/loader.js"></script>
     <script src="src/app.common.js"></script>
+    <script src="src/app.env.js"></script>
     <script src="src/app.load.js"></script>
     <script src="test/runner.js"></script>
     <script id="searchTemplate" type="text/x-template">
@@ -32,7 +33,7 @@
       </div>
     </script>
     <script>
-      if (window.Test.shouldRun()) {
+      if (window.App.Env.test) {
         window.Test.loadAndRun()
       } else {
         window.App.load()

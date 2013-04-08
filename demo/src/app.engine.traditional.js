@@ -1,4 +1,4 @@
-(function($, _, App) {
+(function($, _, Common) {
   var isEqualToLast = IsEqualToLast()
   var switchLatest = SwitchLatest()
 
@@ -15,7 +15,7 @@
   function onSearchTerm(term) {
     toggleLoadingIndicator(true)
     toggleButtonEnabled(false)
-    switchLatest(App.searchService(term))
+    switchLatest(Common.searchService(term))
       .done(onSearchSuccess)
       .fail(onSearchFailure)
   }
@@ -23,13 +23,13 @@
   function onSearchSuccess(results) {
     toggleLoadingIndicator(false)
     toggleButtonEnabled(true)
-    App.showSearchSuccess($('#search .results'), results)
+    Common.showSearchSuccess($('#search .results'), results)
   }
 
   function onSearchFailure(message) {
     toggleLoadingIndicator(false)
     toggleButtonEnabled(true)
-    App.showSearchFailure($('#search .results'), message)
+    Common.showSearchFailure($('#search .results'), message)
   }
 
   function toggleLoadingIndicator(enable) {
@@ -61,4 +61,4 @@
   }
 
   console.log('Loaded traditional engine')
-})(window.jQuery, window._, window.App)
+})(window.jQuery, window._, window.App.Common)

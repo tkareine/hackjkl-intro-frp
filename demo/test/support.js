@@ -1,44 +1,46 @@
 (function($, _, App, Test, Bacon, Rx) {
   Test.Support = {
-    FakeBackend:       FakeBackend,
-    query:             query,
-    resetApp:          resetApp,
-    storeResponderTo:  storeResponderTo,
-    swapThrottleImpls: swapThrottleImpls,
-    swapValue:         swapValue
+    pauseThrottleImpls: pauseThrottleImpls,
+    query:              query,
+    resetApp:           resetApp,
+    storeResponderTo:   storeResponderTo,
+    swapValue:          swapValue
   }
 
-  function FakeBackend() {
-    var countCalls = 0
-    var responderStub
+  function pauseThrottleImpls() {
+    var engineArgs = ({
+        bacon:       [BaconPauseStream, Bacon.EventStream.prototype, 'debounce'],
+        rx:          [Rx.Observable.prototype, 'throttle', Rx.Observable.prototype.__org__throttle],
+        traditional: [_, 'debounce', _.__org__debounce]
+      })[App.Env.engine]
 
-    reset()
+    var pauser = engineArgs[2]()
+    var swapped = swapValue.call(null, engineArgs.slice(1).concat(pauser.combinator))
 
     return {
-      checkCalls:  getAndResetNumberOfCalls,
-      search:      search,
-      reset:       reset,
-      respondWith: stubResponder
+      resumeLast: pauser.resumeLast,
+      restore:    swapped.restore
+    }
+  }
+
+  function BaconPauseStream() {
+    var onValueEvents = []
+
+    var collectorCombinator = function() {
+      var upstream = this
+      return new Bacon.EventStream(function(subscriber) {
+        return upstream.onValue(function(val) {
+          onValueEvents.push(function() { subscriber(new Bacon.Next(val)) })
+        })
+      })
     }
 
-    function getAndResetNumberOfCalls() {
-      var num = countCalls
-      countCalls = 0
-      return num
+    var resumeLastEvent = function() {
+      if (!_.isEmpty(onValueEvents)) _.last(onValueEvents)()
+      onValueEvents.length = 0
     }
 
-    function search(query) {
-      countCalls += 1
-      var deferred = $.Deferred()
-      responderStub(query, deferred)
-      return deferred.promise()
-    }
-
-    function stubResponder(stub) { responderStub = stub }
-
-    function reset() { stubResponder(respondDefault) }
-
-    function respondDefault(query, deferred) { deferred.resolve(App.queryToResult(query)) }
+    return { combinator: collectorCombinator, resumeLast: resumeLastEvent }
   }
 
   function query(input) { $('#search input').val(input).keyup() }
@@ -52,18 +54,6 @@
     return function(query, deferred) {
       obj.query = query
       obj.deferred = deferred
-    }
-  }
-
-  function swapThrottleImpls() {
-    var _debounce = swapValue(_, 'debounce', _.__org__debounce)
-    var baconDebounce = swapValue(Bacon.EventStream.prototype, 'debounce', Bacon.EventStream.prototype.__org__debounce)
-    var rxThrottle = swapValue(Rx.Observable.prototype, 'throttle', Rx.Observable.prototype.__org__throttle)
-
-    return { restore: restore }
-
-    function restore() {
-      _.map([_debounce, baconDebounce, rxThrottle], function(o) { o.restore() })
     }
   }
 

@@ -1,7 +1,9 @@
 (function($, _) {
   var isMinTimeoutFlipped = false
 
-  window.App = {
+  window.App = {}
+
+  window.App.Common = {
     searchService:     searchService,
     queryToResult:     queryToResult,
     showSearchSuccess: showSearchSuccess,

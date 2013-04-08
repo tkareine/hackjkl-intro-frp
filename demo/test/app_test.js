@@ -97,6 +97,8 @@
       })
     })
 
+    // TODO: Add test for interleaving
+
     function expectNumCalls(num) {
       return function() { backend.checkCalls().should.equal(num) }
     }

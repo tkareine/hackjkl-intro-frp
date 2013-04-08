@@ -10,7 +10,7 @@
     var engineArgs = ({
         bacon:       [BaconPauseStream, Bacon.EventStream.prototype, 'debounce'],
         rx:          [RxPauseStream,    Rx.Observable.prototype,     'throttle'],
-        traditional: [_, 'debounce', _.__org__debounce]
+        traditional: [FunPauseStream,   _,                           'debounce']
       })[App.Env.engine]
 
     var pauser = engineArgs[0]()
@@ -31,6 +31,22 @@
           lastEvent = function() { subscriber(new Bacon.Next(val)) }
         })
       })
+    }
+
+    function resumeLast() { if (lastEvent) lastEvent() }
+  }
+
+  function FunPauseStream() {
+    var lastEvent
+
+    return { combinator: combinator, resumeLast: resumeLast }
+
+    function combinator(func) {
+      return function() {
+        var that = this
+        var args = arguments
+        lastEvent = function() { func.apply(that, args) }
+      }
     }
 
     function resumeLast() { if (lastEvent) lastEvent() }

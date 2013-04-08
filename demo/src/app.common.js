@@ -15,7 +15,7 @@
 
     var deferred = $.Deferred()
 
-    _.delay(function() {
+    setTimeout(function() {
       if (randomSuccess()) {
         console.log('  resolving search: ' + query)
         deferred.resolve(queryToResult(query))

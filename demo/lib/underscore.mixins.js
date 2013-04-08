@@ -2,7 +2,7 @@
   _.mixin({
     not: function(fun) {
       var that = this
-      return function() { return !fun.apply(that, _.toArray(arguments)) }
+      return function() { return !fun.apply(that, arguments) }
     }
   })
 })(window._)

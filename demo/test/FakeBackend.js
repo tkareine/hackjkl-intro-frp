@@ -53,7 +53,7 @@
     // simulate network: response must arrive after all UI callbacks for making a request
     function createAsyncStubResponse(stub, callback) {
       return function() {
-        var args = _.toArray(arguments)
+        var args = arguments
         setTimeout(function() {
           stub.apply(null, args)
           callback()

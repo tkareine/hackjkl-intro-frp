@@ -43,7 +43,7 @@
 
       function setupUnderscore() {
         _.__org__debounce = _.debounce
-        _.debounce = function(func) { return function() { return func.apply(this, _.toArray(arguments)) } }
+        _.debounce = function(func) { return function() { return func.apply(this, arguments) } }
       }
 
       function setupBacon() {

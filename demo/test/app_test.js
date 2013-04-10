@@ -91,7 +91,10 @@
         }).then(done)
       })
 
-      after(function() { throttler.restore() })
+      after(function(done) {
+        throttler.restore()
+        TS.resetApp().then(done)
+      })
 
       it('does not perform search', expectNumCalls(0))
 

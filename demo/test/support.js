@@ -71,9 +71,9 @@
 
   function query(input) { $('#search input').val(input).keyup() }
 
-  function resetApp(callback) {
+  function resetApp() {
     $('#search').remove()
-    App.load().then(function() { callback() })
+    return App.load()
   }
 
   function swapValue(obj, name, newValue) {

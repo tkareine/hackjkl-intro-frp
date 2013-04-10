@@ -1,6 +1,8 @@
 (function($, TS, backend) {
   describe('After loading application', function() {
-    before(TS.resetApp)
+    before(function(done) {
+      TS.resetApp().then(done)
+    })
 
     describe('when entering space for search', function() {
       before(function() {
@@ -82,12 +84,11 @@
 
       before(function(done) {
         throttler = TS.pauseThrottling()
-        TS.resetApp(function() {
+        TS.resetApp().then(function() {
           TS.query('input')
           TS.query('')
           throttler.resumeLast()
-          done()
-        })
+        }).then(done)
       })
 
       after(function() { throttler.restore() })

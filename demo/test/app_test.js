@@ -108,7 +108,6 @@
 
         describe('and then changing the input and changing it back within throttling period', function() {
           before(function() {
-            backend.reset()
             TS.query('inp')
             TS.query('input')
             throttler.resumeLast()

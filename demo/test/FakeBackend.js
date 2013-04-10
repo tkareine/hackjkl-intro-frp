@@ -20,7 +20,7 @@
       search:           search
     }
 
-    function captureRequestTo(obj, callback) { stubResponse(storeRequestTo(obj), callback) }
+    function captureRequestTo(obj) { return stubResponse(storeRequestTo(obj)) }
 
     function getAndResetNumberOfCalls() {
       var num = countCalls
@@ -30,14 +30,14 @@
 
     function reset() {
       countCalls = 0
-      stubResponse(succeed)
+      return stubResponse(succeed)
     }
 
-    function respondFailure(callback) { stubResponse(fail, callback) }
+    function respondFailure() { return stubResponse(fail, { async: true }) }
 
     function respondFailureTo(request) { fail(null, request.deferred) }
 
-    function respondSuccess(callback) { stubResponse(succeed, callback) }
+    function respondSuccess() { return stubResponse(succeed, { async: true }) }
 
     function respondSuccessTo(request) { succeed(request.query, request.deferred) }
 
@@ -52,17 +52,25 @@
       return deferred.promise()
     }
 
-    function stubResponse(stub, callback) {
-      responderStub = callback ? createAsyncStubResponse(stub, callback) : stub
+    function stubResponse(stub, options) {
+      return (options && options.async) ? setAsyncStubResponse(stub) : setSyncStubResponse(stub)
     }
 
+    function setAsyncStubResponse(stub) {
+      var deferred = $.Deferred()
+      responderStub = createAsyncStubResponse(stub, deferred)
+      return deferred.promise()
+    }
+
+    function setSyncStubResponse(stub) { responderStub = stub }
+
     // simulate network: response must arrive after all UI callbacks for making a request
-    function createAsyncStubResponse(stub, callback) {
+    function createAsyncStubResponse(stub, deferred) {
       return function() {
         var args = arguments
         setTimeout(function() {
           stub.apply(null, args)
-          callback()
+          deferred.resolve()
         }, 0)
       }
     }

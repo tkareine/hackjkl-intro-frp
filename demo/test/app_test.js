@@ -19,8 +19,8 @@
     describe('when entering space, term, and space for search, and response has not arrived', function() {
       var request = {}
 
-      before(function(done) {
-        backend.captureRequestTo(request, done)
+      before(function() {
+        backend.captureRequestTo(request)
         TS.query(' term ')
       })
 
@@ -49,7 +49,7 @@
 
     describe('when query results to backend response failure', function() {
       before(function(done) {
-        backend.respondFailure(done)
+        backend.respondFailure().then(done)
         TS.query('another term')
       })
 
@@ -97,7 +97,7 @@
 
       describe('and then entering new input and waiting for the throttling period', function() {
         before(function(done) {
-          backend.respondSuccess(done)
+          backend.respondSuccess().then(done)
           TS.query('input')
           throttler.resumeLast()
         })

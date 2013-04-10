@@ -56,6 +56,27 @@
       it('shows failure results', expectResultsIs('failure'))
     })
 
+    describe('when querying the backend twice in sequence and the response to the second last request arrives last', function() {
+      before(function() {
+        var firstRequest = {}
+        var secondRequest = {}
+
+        backend.captureRequestTo(firstRequest)
+        TS.query('lol')
+        backend.captureRequestTo(secondRequest)
+        TS.query('zap')
+
+        backend.respondSuccessTo(secondRequest)
+        backend.respondSuccessTo(firstRequest)
+      })
+
+      after(backend.reset)
+
+      it('issues two requests', expectNumCalls(2))
+
+      it('shows the result corresponding to the last request', expectResultsContains('original: zap'))
+    })
+
     describe('when entering input and changing it back to empty within throttling period (after page load)', function() {
       var throttler
 
@@ -97,8 +118,6 @@
       })
     })
 
-    // TODO: Add test for interleaving
-
     function expectNumCalls(num) {
       return function() { backend.checkCalls().should.equal(num) }
     }
@@ -117,6 +136,10 @@
 
     function expectResultsIs(klass) {
       return function() { $('#search .results').should.have.class(klass) }
+    }
+
+    function expectResultsContains(text) {
+      return function() { $('#search .results').should.have.contain(text) }
     }
   })
 })(window.jQuery, window.Test.Support, window.Test.fakeBackend)

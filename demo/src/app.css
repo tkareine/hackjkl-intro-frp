@@ -6,6 +6,26 @@ body {
 #search {
   background-color: #dddddd;
   padding: 10px;
+  position: relative;
+}
+#search .engine {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 125px;
+  height: 125px;
+}
+#search .engine.bacon {
+  border: 1px solid black;
+  background: url('porco_rosso.jpg') no-repeat;
+}
+#search .engine.rx {
+  border: 1px solid black;
+  background: url('donald_curtis.jpg') no-repeat;
+}
+#search .engine.traditional {
+  border: 1px solid black;
+  background: url('plane_smoking.jpg') no-repeat;
 }
 #search .controls {
   padding-right: 20px;

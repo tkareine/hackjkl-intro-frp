@@ -33,11 +33,13 @@
       </div>
     </script>
     <script>
-      if (window.App.Env.test) {
-        window.Test.loadAndRun()
-      } else {
-        window.App.load()
-      }
+      $(function() {
+        if (window.App.Env.test) {
+          window.Test.loadAndRun()
+        } else {
+          window.App.load()
+        }
+      })
     </script>
   </body>
 </html>

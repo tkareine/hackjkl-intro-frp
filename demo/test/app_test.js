@@ -2,6 +2,10 @@
   describe('After loading application', function() {
     before(TS.resetApp)
 
+    it('enables search button', expectSearchButtonIs(':enabled'))
+
+    it('hides loader', expectSearchButtonLoaderIsShown(false))
+
     describe('when entering space for search', function() {
       before(function() {
         TS.query(' ')

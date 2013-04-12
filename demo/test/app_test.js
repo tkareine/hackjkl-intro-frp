@@ -1,8 +1,6 @@
 (function($, TS, backend) {
   describe('After loading application', function() {
-    before(function(done) {
-      TS.resetApp().then(done)
-    })
+    before(TS.resetApp)
 
     describe('when entering space for search', function() {
       before(function() {
@@ -82,18 +80,17 @@
     describe('when entering input and changing it back to empty within throttling period (after page load)', function() {
       var throttler
 
-      before(function(done) {
+      before(function() {
         throttler = TS.pauseThrottling()
-        TS.resetApp().then(function() {
-          TS.query('input')
-          TS.query('')
-          throttler.resumeLast()
-        }).then(done)
+        TS.resetApp()
+        TS.query('input')
+        TS.query('')
+        throttler.resumeLast()
       })
 
-      after(function(done) {
+      after(function() {
         throttler.restore()
-        TS.resetApp().then(done)
+        TS.resetApp()
       })
 
       it('does not perform search', expectNumCalls(0))

@@ -1,23 +1,27 @@
-(function($, _, Common) {
-  var isEqualToLast = IsEqualToLast()
-  var switchLatest = SwitchLatest()
+(function($, _, Common, exports) {
+  exports.startEngine = startEngine
 
-  $('#search input').on('keyup', _.debounce(function(e) {
-    var input = $.trim(e.currentTarget.value)
-    if (!_.isEmpty(input) && !isEqualToLast(input)) onSearchTerm(input)
-  }, 500))
-  
-  $('#search button').on('click', function() {
-    var input = $.trim($('#search input').val())
-    if (!_.isEmpty(input)) onSearchTerm(input)
-  })
+  function startEngine() {
+    var isEqualToLast = IsEqualToLast()
+    var switchLatest = SwitchLatest()
 
-  function onSearchTerm(term) {
-    toggleLoadingIndicator(true)
-    toggleButtonEnabled(false)
-    switchLatest(Common.searchService(term))
-      .done(onSearchSuccess)
-      .fail(onSearchFailure)
+    $('#search input').on('keyup', _.debounce(function(e) {
+      var input = $.trim(e.currentTarget.value)
+      if (!_.isEmpty(input) && !isEqualToLast(input)) onSearchTerm(input)
+    }, 500))
+
+    $('#search button').on('click', function() {
+      var input = $.trim($('#search input').val())
+      if (!_.isEmpty(input)) onSearchTerm(input)
+    })
+
+    function onSearchTerm(term) {
+      toggleLoadingIndicator(true)
+      toggleButtonEnabled(false)
+      switchLatest(Common.searchService(term))
+        .done(onSearchSuccess)
+        .fail(onSearchFailure)
+    }
   }
 
   function onSearchSuccess(results) {
@@ -59,6 +63,4 @@
       return deferred.promise()
     }
   }
-
-  console.log('Loaded traditional engine')
-})(window.jQuery, window._, window.App.Common)
+})(window.jQuery, window._, window.App.Common, window.App)

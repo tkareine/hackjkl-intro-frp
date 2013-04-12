@@ -1,7 +1,7 @@
-(function(_, App) {
+(function(_, exports) {
   var queryParams = queryParameters()
 
-  App.Env = {
+  exports.Env = {
     engine: queryParams['engine'] || 'traditional',
     test:   _.has(queryParams, 'test') || _.has(queryParams, 'grep')
   }

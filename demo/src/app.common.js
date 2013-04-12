@@ -1,13 +1,13 @@
-(function($, _) {
+(function($, _, exports) {
   var isMinTimeoutFlipped = false
 
-  window.App = {}
-
-  window.App.Common = {
-    searchService:     searchService,
-    queryToResult:     queryToResult,
-    showSearchSuccess: showSearchSuccess,
-    showSearchFailure: showSearchFailure
+  exports.App = {
+    Common: {
+      searchService:     searchService,
+      queryToResult:     queryToResult,
+      showSearchSuccess: showSearchSuccess,
+      showSearchFailure: showSearchFailure
+    }
   }
 
   function searchService(query) {
@@ -66,4 +66,4 @@
       .addClass('failure')
       .text(message)
   }
-})(window.jQuery, window._)
+})(window.jQuery, window._, window)

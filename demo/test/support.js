@@ -1,5 +1,5 @@
-(function($, _, App, Test, Bacon, Rx) {
-  Test.Support = {
+(function($, _, App, Bacon, Rx, exports) {
+  exports.Support = {
     pauseThrottling: pauseThrottling,
     query:           query,
     resetApp:        resetApp,
@@ -7,11 +7,12 @@
   }
 
   function pauseThrottling() {
+    // Needs to be lazy, because only one of the engines is loaded.
     var engineArgs = ({
-        bacon:       [BaconPauseStream, Bacon.EventStream.prototype, 'debounce'],
-        rx:          [RxPauseStream,    Rx.Observable.prototype,     'throttle'],
-        traditional: [FunPauseStream,   _,                           'debounce']
-      })[App.Env.engine]
+        bacon:       function() { return [BaconPauseStream, Bacon.EventStream.prototype, 'debounce'] },
+        rx:          function() { return [RxPauseStream,    Rx.Observable.prototype,     'throttle'] },
+        traditional: function() { return [FunPauseStream,   _,                           'debounce'] }
+      })[App.Env.engine]()
 
     var pauser = engineArgs[0]()
     var swapped = swapValue.apply(null, engineArgs.slice(1).concat(pauser.combinator))
@@ -73,7 +74,7 @@
 
   function resetApp() {
     $('#search').remove()
-    return App.load()
+    App.start()
   }
 
   function swapValue(obj, name, newValue) {
@@ -81,4 +82,4 @@
     obj[name] = newValue
     return { restore: function() { obj[name] = orgValue } }
   }
-})(window.jQuery, window._, window.App, window.Test, window.Bacon, window.Rx)
+})(window.jQuery, window._, window.App, window.Bacon, window.Rx, window.Test)

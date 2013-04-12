@@ -1,31 +1,33 @@
-(function($, _, Bacon, Common) {
-  var searchKeypress = $('#search input')
-    .asEventStream('keyup')
-    .debounce(500)
-    .map('.currentTarget.value')
-    .map($.trim)
-    .filter(_.not(_.isEmpty))
-    .skipDuplicates()
+(function($, _, Bacon, Common, exports) {
+  exports.startEngine = startEngine
 
-  var searchButton = $('#search button')
-    .asEventStream('click')
-    .map(function() { return $('#search input').val() })
-    .map($.trim)
-    .filter(_.not(_.isEmpty))
+  function startEngine() {
+    var searchKeypress = $('#search input')
+      .asEventStream('keyup')
+      .debounce(500)
+      .map('.currentTarget.value')
+      .map($.trim)
+      .filter(_.not(_.isEmpty))
+      .skipDuplicates()
 
-  var searchTerm = searchKeypress.merge(searchButton)
+    var searchButton = $('#search button')
+      .asEventStream('click')
+      .map(function() { return $('#search input').val() })
+      .map($.trim)
+      .filter(_.not(_.isEmpty))
 
-  var searchResult = searchTerm
-    .map(Common.searchService)
-    .flatMapLatest(Bacon.fromPromise)
+    var searchTerm = searchKeypress.merge(searchButton)
 
-  var isSearching = searchTerm.awaiting(searchResult).mapError(false)
+    var searchResult = searchTerm
+      .map(Common.searchService)
+      .flatMapLatest(Bacon.fromPromise)
 
-  searchResult.onValue(_.bind(Common.showSearchSuccess, null, $('#search .results')))
-  searchResult.onError(_.bind(Common.showSearchFailure, null, $('#search .results')))
+    var isSearching = searchTerm.awaiting(searchResult).mapError(false)
 
-  isSearching.assign($('#search .controls'), 'toggleClass', 'loading')
-  isSearching.assign($('#search .controls button'), 'prop', 'disabled')
+    searchResult.onValue(_.bind(Common.showSearchSuccess, null, $('#search .results')))
+    searchResult.onError(_.bind(Common.showSearchFailure, null, $('#search .results')))
 
-  console.log('Loaded Bacon engine')
-})(window.jQuery, window._, window.Bacon, window.App.Common)
+    isSearching.assign($('#search .controls'), 'toggleClass', 'loading')
+    isSearching.assign($('#search .controls button'), 'prop', 'disabled')
+  }
+})(window.jQuery, window._, window.Bacon, window.App.Common, window.App)

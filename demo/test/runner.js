@@ -1,5 +1,5 @@
-(function($, _, Loader, App, Bacon, Rx) {
-  var Test = window.Test = { loadAndRun: loadAndRunTests }
+(function($, _, Loader, App, exports) {
+  var Test = exports.Test = { loadAndRun: loadAndRunTests }
 
   function loadAndRunTests() {
     var mocha, chai
@@ -47,11 +47,13 @@
       }
 
       function setupBacon() {
+        var Bacon = window.Bacon
         Bacon.EventStream.prototype.__org__debounce = Bacon.EventStream.prototype.debounce
         Bacon.EventStream.prototype.debounce = function() { return this }
       }
 
       function setupRxJS() {
+        var Rx = window.Rx
         Rx.Observable.prototype.__org__throttle = Rx.Observable.prototype.throttle
         Rx.Observable.prototype.throttle = function() { return this }
       }
@@ -68,4 +70,4 @@
 
     function runMocha() { mocha.checkLeaks().run() }
   }
-})(window.jQuery, window._, window.Loader, window.App, window.Bacon, window.Rx)
+})(window.jQuery, window._, window.Loader, window.App, window)

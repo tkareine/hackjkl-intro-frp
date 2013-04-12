@@ -26,10 +26,7 @@
       .publish()
       .refCount()
 
-    var isSearching = searchTerm.selectAs(true)
-      .merge(searchResult.selectAs(false))
-      .publish()
-      .refCount()
+    var isSearching = searchTerm.selectAs(true).merge(searchResult.selectAs(false))
 
     searchResult
       .where(isSuccessMaterial)

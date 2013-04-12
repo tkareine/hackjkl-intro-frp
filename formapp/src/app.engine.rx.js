@@ -2,15 +2,22 @@
   exports.startEngine = startEngine
 
   function startEngine() {
-    var searchKeypress = $('#search .controls input')
+    var searchInput = $('#search .controls input')
       .onAsObservable('keyup')
       .throttle(500)
       .select(currentTargetValueOf)
       .select($.trim)
-      .where(_.not(_.isEmpty))
-      .distinctUntilChanged()
       .publish()
       .refCount()
+
+    var searchInvalidInput = searchInput.where(_.isEmpty)
+    var searchValidInput = searchInput.where(_.not(_.isEmpty))
+
+    var isValidSearchInput = searchValidInput.selectAs(true)
+      .merge(searchInvalidInput.selectAs(false))
+      .startWith(false)
+
+    var searchKeypress = searchValidInput.distinctUntilChanged()
 
     var searchButton = $('#search .controls button')
       .onAsObservable('click')
@@ -26,7 +33,9 @@
       .publish()
       .refCount()
 
-    var isSearching = searchTerm.selectAs(true).merge(searchResult.selectAs(false))
+    var isSearching = searchTerm.selectAs(true)
+      .merge(searchResult.selectAs(false))
+      .startWith(false)
 
     searchResult
       .where(isSuccessMaterial)
@@ -41,7 +50,10 @@
       .subscribe(_.bind(Common.showSearchFailure, null, $('#search .results')))
 
     isSearching.subscribe(_.bind($.fn.toggleClass, $('#search .controls .searchButton'), 'loading'))
-    isSearching.subscribe(_.bind($.fn.prop, $('#search .controls button'), 'disabled'))
+
+    isSearching
+      .combineLatest(isValidSearchInput, function(searching, valid) { return searching || !valid })
+      .subscribe(_.bind($.fn.prop, $('#search .controls button'), 'disabled'))
   }
 
   function currentTargetValueOf(event) { return event.currentTarget.value }

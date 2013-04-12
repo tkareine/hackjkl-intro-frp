@@ -2,7 +2,7 @@
   exports.startEngine = startEngine
 
   function startEngine() {
-    var searchKeypress = $('#search input')
+    var searchKeypress = $('#search .controls input')
       .onAsObservable('keyup')
       .throttle(500)
       .select(currentTargetValueOf)
@@ -12,9 +12,9 @@
       .publish()
       .refCount()
 
-    var searchButton = $('#search button')
+    var searchButton = $('#search .controls button')
       .onAsObservable('click')
-      .select(function() { return $('#search input').val() })
+      .select(function() { return $('#search .controls input').val() })
       .select($.trim)
       .where(_.not(_.isEmpty))
 
@@ -43,7 +43,7 @@
       .selectProperty('0')
       .subscribe(_.bind(Common.showSearchFailure, null, $('#search .results')))
 
-    isSearching.subscribe(_.bind($.fn.toggleClass, $('#search .controls'), 'loading'))
+    isSearching.subscribe(_.bind($.fn.toggleClass, $('#search .controls .searchButton'), 'loading'))
     isSearching.subscribe(_.bind($.fn.prop, $('#search .controls button'), 'disabled'))
   }
 

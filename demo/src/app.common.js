@@ -51,9 +51,15 @@
 
   function showSearchSuccess($destination, results) {
     $destination
-      .removeClass('failure')
-      .addClass('success')
-      .html(resultsToMarkup(results))
+      .slideUp('fast')
+      .promise()
+      .then(function() {
+        $destination
+          .removeClass('failure')
+          .addClass('success')
+          .html(resultsToMarkup(results))
+          .slideDown('fast')
+      })
 
     function resultsToMarkup(results) { return '<ul>' + _.map(results, resultToListItem).join('') + '</li>' }
 
@@ -62,8 +68,14 @@
 
   function showSearchFailure($destination, message) {
     $destination
-      .removeClass('success')
-      .addClass('failure')
-      .text(message)
+      .slideUp('fast')
+      .promise()
+      .then(function() {
+        $destination
+          .removeClass('success')
+          .addClass('failure')
+          .text(message)
+          .slideDown('fast')
+      })
   }
 })(window.jQuery, window._, window)

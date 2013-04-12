@@ -5,12 +5,12 @@
     var isEqualToLast = IsEqualToLast()
     var switchLatest = SwitchLatest()
 
-    $('#search input').on('keyup', _.debounce(function(e) {
+    $('#search .controls input').on('keyup', _.debounce(function(e) {
       var input = $.trim(e.currentTarget.value)
       if (!_.isEmpty(input) && !isEqualToLast(input)) onSearchTerm(input)
     }, 500))
 
-    $('#search button').on('click', function() {
+    $('#search .controls button').on('click', function() {
       var input = $.trim($('#search input').val())
       if (!_.isEmpty(input)) onSearchTerm(input)
     })
@@ -37,7 +37,7 @@
   }
 
   function toggleLoadingIndicator(enable) {
-    $('#search .controls').toggleClass('loading', enable)
+    $('#search .controls .searchButton').toggleClass('loading', enable)
   }
 
   function toggleButtonEnabled(enable) {

@@ -2,7 +2,7 @@
   exports.startEngine = startEngine
 
   function startEngine() {
-    var searchKeypress = $('#search input')
+    var searchKeypress = $('#search .controls input')
       .asEventStream('keyup')
       .debounce(500)
       .map('.currentTarget.value')
@@ -10,9 +10,9 @@
       .filter(_.not(_.isEmpty))
       .skipDuplicates()
 
-    var searchButton = $('#search button')
+    var searchButton = $('#search .controls button')
       .asEventStream('click')
-      .map(function() { return $('#search input').val() })
+      .map(function() { return $('#search .controls input').val() })
       .map($.trim)
       .filter(_.not(_.isEmpty))
 
@@ -27,7 +27,7 @@
     searchResult.onValue(_.bind(Common.showSearchSuccess, null, $('#search .results')))
     searchResult.onError(_.bind(Common.showSearchFailure, null, $('#search .results')))
 
-    isSearching.assign($('#search .controls'), 'toggleClass', 'loading')
+    isSearching.assign($('#search .controls .searchButton'), 'toggleClass', 'loading')
     isSearching.assign($('#search .controls button'), 'prop', 'disabled')
   }
 })(window.jQuery, window._, window.Bacon, window.App.Common, window.App)

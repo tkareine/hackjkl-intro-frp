@@ -8,6 +8,10 @@ body {
   padding: 10px;
   position: relative;
 }
+#search h1 {
+  margin: 50px 0 20px;
+  padding: 0;
+}
 #search .engine {
   position: absolute;
   top: 10px;
@@ -28,14 +32,18 @@ body {
   background: url('plane_smoking.jpg') no-repeat;
 }
 #search .controls {
+  margin: 20px 0;
+}
+#search .controls .searchButton {
   padding-right: 20px;
 }
-#search .controls.loading {
+#search .controls .searchButton.loading {
   background: url('loading.gif') no-repeat right;
 }
 #search .results {
-  margin-top: 10px;
+  margin: 10px 0;
   padding: 10px 5px;
+  display: none;
 }
 #search .results.success {
   background-color: rgb(122, 224, 122);

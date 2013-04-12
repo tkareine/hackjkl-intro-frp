@@ -11,7 +11,7 @@
 
       it('enables search button', expectSearchButtonIs(':enabled'))
 
-      it('hides loader', expectLoaderIsShown(false))
+      it('hides loader', expectSearchButtonLoaderIsShown(false))
     })
 
     describe('when entering space, term, and space for search, and response has not arrived', function() {
@@ -30,7 +30,7 @@
 
       it('disables search button', expectSearchButtonIs(':disabled'))
 
-      it('shows loader', expectLoaderIsShown(true))
+      it('shows loader', expectSearchButtonLoaderIsShown(true))
 
       describe('and when successful response arrives', function() {
         before(function() {
@@ -39,7 +39,7 @@
 
         it('enables search button', expectSearchButtonIs(':enabled'))
 
-        it('hides loader', expectLoaderIsShown(false))
+        it('hides loader', expectSearchButtonLoaderIsShown(false))
 
         it('shows successful results', expectResultsIs('success'))
       })
@@ -130,8 +130,8 @@
       return function() { $('#search .controls button').is(status).should.be.ok }
     }
 
-    function expectLoaderIsShown(isShown) {
-      return function() { $('#search .controls').hasClass('loading').should.equal(isShown) }
+    function expectSearchButtonLoaderIsShown(isShown) {
+      return function() { $('#search .controls .searchButton').hasClass('loading').should.equal(isShown) }
     }
 
     function expectResultsIs(klass) {

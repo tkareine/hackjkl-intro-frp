@@ -2,7 +2,7 @@
   describe('After loading application', function() {
     before(TS.resetApp)
 
-    it('enables search button', expectSearchButtonIs(':enabled'))
+    it('disables search button', expectSearchButtonIs(':disabled'))
 
     it('hides loader', expectSearchButtonLoaderIsShown(false))
 
@@ -13,7 +13,7 @@
 
       it('does not perform search', expectNumCalls(0))
 
-      it('enables search button', expectSearchButtonIs(':enabled'))
+      it('disables search button', expectSearchButtonIs(':disabled'))
 
       it('hides loader', expectSearchButtonLoaderIsShown(false))
     })
@@ -99,6 +99,8 @@
 
       it('does not perform search', expectNumCalls(0))
 
+      it('disables search button', expectSearchButtonIs(':disabled'))
+
       describe('and then entering new input and waiting for the throttling period', function() {
         before(function(done) {
           backend.respondSuccess().then(done)
@@ -110,6 +112,8 @@
 
         it('performs search', expectNumCalls(1))
 
+        it('enables search button', expectSearchButtonIs(':enabled'))
+
         describe('and then changing the input and changing it back within throttling period', function() {
           before(function() {
             TS.query('inp')
@@ -118,6 +122,8 @@
           })
 
           it('does not perform search', expectNumCalls(0))
+
+          it('enables search button', expectSearchButtonIs(':enabled'))
         })
       })
     })

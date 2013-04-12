@@ -5,7 +5,7 @@ body {
 }
 #search {
   background-color: #dddddd;
-  padding: 10px;
+  padding: 20px 10px;
   position: relative;
 }
 #search h1 {
@@ -32,7 +32,7 @@ body {
   background: url('plane_smoking.jpg') no-repeat;
 }
 #search .controls {
-  margin: 20px 0;
+  margin: 30px 0;
 }
 #search .controls .searchButton {
   padding-right: 20px;
@@ -41,7 +41,6 @@ body {
   background: url('loading.gif') no-repeat right;
 }
 #search .results {
-  margin: 10px 0;
   padding: 10px 5px;
   display: none;
 }
@@ -50,4 +49,15 @@ body {
 }
 #search .results.failure {
   background-color: rgb(255, 152, 152);
+}
+footer {
+  background-color: #dddddd;
+  font-size: 10px;
+  color: #777777;
+  text-align: center;
+  padding: 10px 0;
+
+}
+footer a {
+  color: #777777;
 }

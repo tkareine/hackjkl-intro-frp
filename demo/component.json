@@ -1,0 +1,17 @@
+{
+  "name": "hackjkl-intro-frp",
+  "version": "0.0.1",
+  "dependencies": {
+    "bacon": "0.3.6",
+    "rxjs": "2.1.2",
+    "rxjs-contrib": "git://github.com/Reactive-Extensions/RxJS-Contrib.git",
+    "rxjs-jquery": "latest",
+    "jquery": "1.9.1",
+    "underscore": "1.4.4"
+  },
+  "devDependencies": {
+    "chai": "1.5.0",
+    "chai-jquery": "1.1.1",
+    "mocha": "1.9.0"
+  }
+}

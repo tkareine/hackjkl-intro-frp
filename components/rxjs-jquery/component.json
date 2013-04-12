@@ -1,9 +1,0 @@
-{
-  "name": "rxjs-jquery",
-  "version": "0.0.0",
-  "commit": "f3e8b6de167820489644dc98899e21feae539838",
-  "repository": {
-    "type": "git",
-    "url": "git://github.com/Reactive-Extensions/rxjs-jquery"
-  }
-}

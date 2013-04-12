@@ -21,19 +21,21 @@
       switchLatest(Common.searchService(term))
         .done(onSearchSuccess)
         .fail(onSearchFailure)
+        .always(onSearchComplete)
     }
   }
 
   function onSearchSuccess(results) {
-    toggleLoadingIndicator(false)
-    toggleButtonEnabled(true)
     Common.showSearchSuccess($('#search .results'), results)
   }
 
   function onSearchFailure(message) {
+    Common.showSearchFailure($('#search .results'), message)
+  }
+
+  function onSearchComplete() {
     toggleLoadingIndicator(false)
     toggleButtonEnabled(true)
-    Common.showSearchFailure($('#search .results'), message)
   }
 
   function toggleLoadingIndicator(enable) {

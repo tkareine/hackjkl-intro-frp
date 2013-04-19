@@ -1,7 +1,5 @@
 body {
   font-family: Helvetica;
-  margin: 0;
-  padding: 0;
 }
 #search {
   background-color: #dddddd;
@@ -10,7 +8,7 @@ body {
 }
 #search h1 {
   margin: 50px 0 20px;
-  padding: 0;
+  font-size: 200%;
 }
 #search .engine {
   position: absolute;
@@ -43,6 +41,15 @@ body {
 #search .results {
   padding: 10px 5px;
   display: none;
+}
+#search .results li {
+  list-style: none;
+  padding-left: 1em;
+}
+#search .results li:before {
+  position: relative;
+  left: -0.8em;
+  content: "\00bb";
 }
 #search .results.success {
   background-color: rgb(122, 224, 122);

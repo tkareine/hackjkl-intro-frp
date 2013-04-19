@@ -1,0 +1,16 @@
+@import url(http://fonts.googleapis.com/css?family=Inconsolata:400);
+body {
+  background-color: #3f3f3f;
+}
+#content {
+  margin: 0 auto;
+  width: 780px;
+}
+code {
+  font-family: Inconsolata, monospace;
+}
+#canvaspaint {
+  display: block;
+  position: absolute;
+  top: 0;
+}

@@ -17,14 +17,14 @@
       .then(runMocha)
 
     function loadMocha() {
-      Loader.loadCSS('components/mocha/mocha.css')  // NOTE: CSS gets applied later, but this should not matter
+      Loader.loadCSS('../components/mocha/mocha.css')  // NOTE: CSS gets applied later, but this should not matter
       $('body').append('<div id="mocha" />')
-      return Loader.loadJS('components/mocha/mocha.js').then(function() { mocha = window.mocha })
+      return Loader.loadJS('../components/mocha/mocha.js').then(function() { mocha = window.mocha })
     }
 
-    function loadChai() { return Loader.loadJS('components/chai/chai.js').then(function() { chai = window.chai }) }
+    function loadChai() { return Loader.loadJS('../components/chai/chai.js').then(function() { chai = window.chai }) }
 
-    function loadChaiJQuery() { return Loader.loadJS('components/chai-jquery/chai-jquery.js') }
+    function loadChaiJQuery() { return Loader.loadJS('../components/chai-jquery/chai-jquery.js') }
 
     function loadTestSupport() { return Loader.loadJS('test/support.js') }
 

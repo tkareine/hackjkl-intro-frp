@@ -15,7 +15,7 @@
       })
     }, $.when())
 
-    function dep(path) { return 'components/' + path + '.js' }
+    function dep(path) { return '../components/' + path + '.js' }
 
     function src(path) { return 'src/' + path + '.js' }
   }

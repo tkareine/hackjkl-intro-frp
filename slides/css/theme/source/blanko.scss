@@ -59,6 +59,11 @@ $selectionBackgroundColor: rgba(0, 0, 0, 0.99);
     max-height: 100%;
   }
 
+  figure img {
+    border: none;
+    box-shadow: none;
+  }
+
   footer {
     font-size: 0.4em;
   }

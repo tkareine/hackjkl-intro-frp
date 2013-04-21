@@ -80,19 +80,25 @@ $selectionBackgroundColor: rgba(0, 0, 0, 0.99);
 
   table {
     margin: 0 auto;
-    width: 600px;
     border-spacing: 0;
     line-height: 1.2;
     td, th {
       font-size: 0.6em;
       padding: 10px;
-      &:first-child {
-        border-right: 1px solid $mainColor;
-      }
     }
     th {
-      border-bottom: 1px solid $mainColor;
       font-weight: bold;
+    }
+    &.baconVsRxjs {
+      width: 600px;
+      td, th {
+        &:first-child {
+          border-right: 1px solid $mainColor;
+        }
+      }
+      th {
+        border-bottom: 1px solid $mainColor;
+      }
     }
   }
 

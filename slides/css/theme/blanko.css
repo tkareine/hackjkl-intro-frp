@@ -159,16 +159,18 @@ body {
     text-decoration: underline; }
 .reveal table {
   margin: 0 auto;
-  width: 600px;
   border-spacing: 0;
   line-height: 1.2; }
   .reveal table td, .reveal table th {
     font-size: 0.6em;
     padding: 10px; }
-    .reveal table td:first-child, .reveal table th:first-child {
-      border-right: 1px solid #3f3f3f; }
   .reveal table th {
-    border-bottom: 1px solid #3f3f3f;
     font-weight: bold; }
+  .reveal table.baconVsRxjs {
+    width: 600px; }
+    .reveal table.baconVsRxjs td:first-child, .reveal table.baconVsRxjs th:first-child {
+      border-right: 1px solid #3f3f3f; }
+    .reveal table.baconVsRxjs th {
+      border-bottom: 1px solid #3f3f3f; }
 .reveal .readMore {
   font-size: 0.6em; }

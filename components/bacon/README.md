@@ -40,10 +40,10 @@ You can download the latest [generated javascript](https://raw.github.com/raimoh
 <script src="https://raw.github.com/raimohanska/bacon.js/master/dist/Bacon.js"></script>
 ```
 
-Version 0.3.0 can also be found from cdnjs hosting:
+Version 0.3.5 can also be found from cdnjs hosting:
 
-    http://cdnjs.cloudflare.com/ajax/libs/bacon.js/0.3.0/Bacon.js
-    http://cdnjs.cloudflare.com/ajax/libs/bacon.js/0.3.0/Bacon.min.js
+    http://cdnjs.cloudflare.com/ajax/libs/bacon.js/0.3.5/Bacon.js
+    http://cdnjs.cloudflare.com/ajax/libs/bacon.js/0.3.5/Bacon.min.js
 
 If you're targeting to [node.js](http://nodejs.org/), you can
 
@@ -331,7 +331,8 @@ at the time of the event.
 
 `observable.takeWhile(f)` takes while given predicate function holds true
 
-`observable.take(n)` takes at most n elements from the stream
+`observable.take(n)` takes at most n elements from the stream. Equals to
+Bacon.never() if n <= 0.
 
 `observable.takeUntil(stream2)` takes elements from source until a Next event
 appears in the other stream. If other stream ends without value, it is
@@ -1117,6 +1118,28 @@ Then type `node` and try the following
 ```js
 Bacon = require("baconjs").Bacon
 Bacon.sequentially(1000, ["B", "A", "C", "O", "N"]).log()
+```
+
+AMD
+===
+
+Yep. Currently exports Bacon through AMD and assigns to `window` for backwards
+compatibility.
+
+If you would like to use it with jQuery and AMD, you should monkey patch jQuery
+explicitly so that module loading order does not matter
+
+```js
+define(function (require) {
+    var $ = require('jquery'),
+        Bacon = require('Bacon');
+
+    $.fn.asEventStream = Bacon.$.asEventStream;
+
+    $(document).asEventStream('click').onValue(function (e) {
+        console.log(e.clientX + ', ' + e.clientY);
+    });
+});
 ```
 
 Why Bacon?

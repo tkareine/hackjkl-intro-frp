@@ -1,5 +1,5 @@
 (function() {
-  var Bacon, Bus, Dispatcher, End, Error, Event, EventStream, Initial, Next, None, Observable, Property, PropertyDispatcher, Some, addPropertyInitValueToStream, assert, assertArray, assertEvent, assertFunction, assertNoArguments, assertString, cloneArray, end, former, indexOf, initial, isFieldKey, isFunction, latter, liftCallback, makeFunction, makeSpawner, methodCall, next, nop, partiallyApplied, remove, sendWrapped, toCombinator, toEvent, toFieldExtractor, toFieldKey, toOption, toSimpleExtractor, _, _ref,
+  var Bacon, Bus, Dispatcher, End, Error, Event, EventStream, Initial, Next, None, Observable, Property, PropertyDispatcher, Some, addPropertyInitValueToStream, assert, assertArray, assertEvent, assertFunction, assertNoArguments, assertString, cloneArray, end, former, indexOf, initial, isFieldKey, isFunction, latter, liftCallback, makeFunction, makeSpawner, methodCall, next, nop, partiallyApplied, sendWrapped, toCombinator, toEvent, toFieldExtractor, toFieldKey, toOption, toSimpleExtractor, _, _ref,
     __slice = [].slice,
     __hasProp = {}.hasOwnProperty,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
@@ -9,6 +9,11 @@
     module.exports = Bacon = {};
     Bacon.Bacon = Bacon;
   } else {
+    if (typeof require === 'function' && (require.amd != null)) {
+      define('bacon', [], function() {
+        return Bacon;
+      });
+    }
     this.Bacon = Bacon = {};
   }
 
@@ -33,7 +38,7 @@
             if (unbinder != null) {
               _results.push(unbinder());
             } else {
-              _results.push(setTimeout((function() {
+              _results.push(Bacon.scheduler.setTimeout((function() {
                 return unbinder();
               }), 0));
             }
@@ -162,9 +167,9 @@
   Bacon.fromPoll = function(delay, poll) {
     return Bacon.fromBinder(function(handler) {
       var id;
-      id = setInterval(handler, delay);
+      id = Bacon.scheduler.setInterval(handler, delay);
       return function() {
-        return clearInterval(id);
+        return Bacon.scheduler.clearInterval(id);
       };
     }, poll);
   };
@@ -810,7 +815,9 @@
     };
 
     Observable.prototype.take = function(count) {
-      assert("take: count must >= 1", count >= 1);
+      if (count <= 0) {
+        return Bacon.never();
+      }
       return this.withHandler(function(event) {
         if (!event.hasValue()) {
           return this.push(event);
@@ -927,7 +934,6 @@
     };
 
     Observable.prototype.skip = function(count) {
-      assert("skip: count must >= 0", count >= 0);
       return this.withHandler(function(event) {
         if (!event.hasValue()) {
           return this.push(event);
@@ -1073,7 +1079,7 @@
             childEnded = false;
             removeChild = function() {
               if (unsubChild != null) {
-                remove(unsubChild, children);
+                _.remove(unsubChild, children);
               }
               return checkEnd();
             };
@@ -1251,7 +1257,7 @@
       if (!isFunction(delay)) {
         delayMs = delay;
         delay = function(f) {
-          return setTimeout(f, delayMs);
+          return Bacon.scheduler.setTimeout(f, delayMs);
         };
       }
       return this.withHandler(function(event) {
@@ -1955,14 +1961,6 @@
     return -1;
   };
 
-  remove = function(x, xs) {
-    var i;
-    i = indexOf(xs, x);
-    if (i >= 0) {
-      return xs.splice(i, 1);
-    }
-  };
-
   assert = function(message, condition) {
     if (!condition) {
       throw message;
@@ -2191,9 +2189,31 @@
       return _.filter((function(y) {
         return y !== x;
       }), xs);
+    },
+    remove: function(x, xs) {
+      var i;
+      i = indexOf(xs, x);
+      if (i >= 0) {
+        return xs.splice(i, 1);
+      }
     }
   };
 
   Bacon._ = _;
+
+  Bacon.scheduler = {
+    setTimeout: function(f, d) {
+      return setTimeout(f, d);
+    },
+    setInterval: function(f, i) {
+      return setInterval(f, i);
+    },
+    clearInterval: function(id) {
+      return clearInterval(id);
+    },
+    now: function() {
+      return new Date().getTime();
+    }
+  };
 
 }).call(this);

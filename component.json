@@ -2,7 +2,7 @@
   "name": "hackjkl-intro-frp",
   "version": "0.0.1",
   "dependencies": {
-    "bacon": "0.3.6",
+    "bacon": "0.3.10",
     "rxjs": "2.1.2",
     "rxjs-contrib": "git://github.com/Reactive-Extensions/RxJS-Contrib.git",
     "rxjs-jquery": "latest",

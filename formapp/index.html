@@ -18,7 +18,14 @@
     <script id="searchTemplate" type="text/x-template">
       <div id="search">
         <h1>Search</h1>
-        <div class="engine"/>
+        <div class="engines">
+          <div class="current" />
+          <ul>
+            <li><a href="?engine=traditional">Traditional</a> <a href="?test&engine=traditional">(test)</a></li>
+            <li><a href="?engine=bacon">Bacon</a> <a href="?test&engine=bacon">(test)</a></li>
+            <li><a href="?engine=rx">RxJS</a> <a href="?test&engine=rx">(test)</a></li>
+          </ul>
+        </div>
         <div class="controls">
           <label>Keyword(s):
             <input type="text" placeholder="enter keywords">

@@ -22,7 +22,7 @@
 
   function start() {
     $('body').prepend($('#searchTemplate').text())
-    $('#search .engine').addClass(App.Env.engine).attr('title', 'Engine: ' + App.Env.engine)
+    $('#search .engines .current').addClass(App.Env.engine).attr('title', 'Engine: ' + App.Env.engine)
     App.startEngine()
   }
 })(window.jQuery, window._, window.Loader, window.App, window.App)

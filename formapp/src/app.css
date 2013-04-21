@@ -1,5 +1,6 @@
 body {
   font-family: Helvetica;
+  min-width: 460px;
 }
 #search {
   background-color: #dddddd;
@@ -7,27 +8,39 @@ body {
   position: relative;
 }
 #search h1 {
-  margin: 50px 0 20px;
+  margin: 60px 0 20px;
   font-size: 200%;
 }
-#search .engine {
+#search .engines {
   position: absolute;
   top: 10px;
   right: 10px;
+}
+#search .engines .current {
   width: 125px;
   height: 125px;
 }
-#search .engine.bacon {
+#search .engines .current.bacon {
   border: 1px solid black;
   background: url('porco_rosso.jpg') no-repeat;
 }
-#search .engine.rx {
+#search .engines .current.rx {
   border: 1px solid black;
   background: url('donald_curtis.jpg') no-repeat;
 }
-#search .engine.traditional {
+#search .engines .current.traditional {
   border: 1px solid black;
   background: url('plane_smoking.jpg') no-repeat;
+}
+#search .engines ul {
+  list-style: none;
+  font-size: 75%;
+}
+#search .engines li {
+  margin-top: 4px;
+}
+#search .engines li a {
+  color: black
 }
 #search .controls {
   margin: 30px 0;
@@ -42,8 +55,10 @@ body {
   padding: 10px 5px;
   display: none;
 }
-#search .results li {
+#search .results ul {
   list-style: none;
+}
+#search .results li {
   padding-left: 1em;
 }
 #search .results li:before {

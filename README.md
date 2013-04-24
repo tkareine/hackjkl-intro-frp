@@ -12,4 +12,4 @@ A short presentation held at [HackJkl](http://agilejkl.com/hackjkl/) event on Mo
 
 The original content copyright &copy; 2013 Tuomas Kareinen. Released under [MIT License](http://www.opensource.org/licenses/MIT).
 
-The rest of the content, such as some libraries and images, are copyright of the original authors. See the appropriate license files in in the project file tree.
+The rest of the content, such as some libraries and images, are copyright of the original authors. See the appropriate license files in the project file tree.

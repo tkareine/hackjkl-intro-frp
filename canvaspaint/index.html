@@ -22,16 +22,16 @@
 
   var mouseDowns = Bacon.fromEventTarget(canvas, 'mousedown').doAction('.preventDefault')
   var mouseUps = Bacon.fromEventTarget(canvas, 'mouseup').doAction('.preventDefault')
-  var isPainting = mouseDowns.awaiting(mouseUps).map(toIsPainting)
-
-  var mouseMoves = Bacon.fromEventTarget(canvas, 'mousemove')
-  var paintLines = Bacon.zipAsArray(mouseMoves, mouseMoves.skip(1)).map(toPoints)
+  var isPainting = mouseDowns.awaiting(mouseUps)
 
   resetContext()
 
-  paintLines.combine(isPainting, mergeObjects).filter('.isPainting').onValue(paintLine)
-
-  function toIsPainting(status) { return { isPainting: status } }
+  Bacon.fromEventTarget(canvas, 'mousemove')
+    .slidingWindow(2)
+    .skip(2)
+    .map(toPoints)
+    .filter(isPainting)
+    .onValue(paintLine)
 
   function toPoints(eventPair) {
     return { start: offsetOf(eventPair[0]), end: offsetOf(eventPair[1]) }
@@ -48,20 +48,6 @@
     context.moveTo(line.start.x, line.start.y)
     context.lineTo(line.end.x, line.end.y)
     context.stroke()
-  }
-
-  function mergeObjects() {
-    var result = {}
-    var objs = Array.prototype.slice.call(arguments, 0)
-    var index
-    var currentObj
-    for (index = 0; index < objs.length; index += 1) {
-      currentObj = objs[index]
-      for (var key in currentObj) {
-        if (currentObj.hasOwnProperty(key)) result[key] = currentObj[key]
-      }
-    }
-    return result
   }
 
   function resetContext() {

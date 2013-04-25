@@ -149,7 +149,7 @@
     }
 
     function expectResultsContains(text) {
-      return function() { $('#search .results').should.have.contain(text) }
+      return function() { $('#search .results').should.contain(text) }
     }
   })
 })(window.jQuery, window.Test.Support, window.Test.fakeBackend)

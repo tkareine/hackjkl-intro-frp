@@ -5,23 +5,40 @@
     var isEqualToLast = IsEqualToLast()
     var switchLatest = SwitchLatest()
 
+    toggleButtonEnabled(false)
+
     $('#search .controls input').on('keyup', _.debounce(function(e) {
       var input = $.trim(e.currentTarget.value)
-      if (!_.isEmpty(input) && !isEqualToLast(input)) onSearchTerm(input)
+      var isValidInputForButton = isInputValidForButton(input)
+      if (isValidInputForButton && !isEqualToLast(input)) {
+        onSearchTerm(input)
+        toggleButtonEnabled(false)
+      } else {
+        toggleButtonEnabled(isValidInputForButton)
+      }
     }, 500))
 
     $('#search .controls button').on('click', function() {
-      var input = $.trim($('#search input').val())
-      if (!_.isEmpty(input)) onSearchTerm(input)
+      var input = getSearchInput()
+      if (isInputValidForButton(input)) onSearchTerm(input)
+      toggleButtonEnabled(false)
     })
+
+    function getSearchInput() { return $.trim($('#search input').val()) }
 
     function onSearchTerm(term) {
       toggleLoadingIndicator(true)
-      toggleButtonEnabled(false)
       switchLatest(Common.searchService(term))
         .done(onSearchSuccess)
         .fail(onSearchFailure)
         .always(onSearchComplete)
+    }
+
+    function isInputValidForButton(input) { return !_.isEmpty(input) }
+
+    function onSearchComplete() {
+      toggleLoadingIndicator(false)
+      toggleButtonEnabled(isInputValidForButton(getSearchInput()))
     }
   }
 
@@ -31,11 +48,6 @@
 
   function onSearchFailure(message) {
     Common.showSearchFailure($('#search .results'), message)
-  }
-
-  function onSearchComplete() {
-    toggleLoadingIndicator(false)
-    toggleButtonEnabled(true)
   }
 
   function toggleLoadingIndicator(enable) {
